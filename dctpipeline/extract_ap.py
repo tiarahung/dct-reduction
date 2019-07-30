@@ -1,10 +1,12 @@
 from .dctutils import *
 from . import cosmics
 from .skyshift import skyshift
+from dctpipeline.telluric_remove import *
+
 __all__ = ["extract_ap"]
 
-def extract_ap(filenum, arcobj='CdArNeHg_1.5', extract=True, flux=True,
-               telluric_cal_id=None, shift=True, splot="yes", quicklook="no",
+def extract_ap(filenum, arcobj='CdArNeHg_1.5', extract=True, flux=True, telluric=True,
+               telluric_frame='bstar.fits', shift=True, splot="yes", quicklook="no",
                redo='no', resize='yes'): #obj: objects+standard; arcobj: lamps/ comparison frame
     sciobj = obsid(filenum).filename(ext = "")
     if extract:
@@ -66,19 +68,21 @@ def extract_ap(filenum, arcobj='CdArNeHg_1.5', extract=True, flux=True,
         iraf.setairmass()
     if shift:
         skyshift(filenum)
-    if telluric_cal_id is not None:
-        telluric(sciobj, telluric_cal_id)
+    if telluric:
+        telluric_remove(sciobj + '.ms.fits', telluric_frame)
+        sciobj = 't'+sciobj
     if flux:
         iraf.unlearn('calibrate')
         # mode switch to make the input noninteractive
         iraf.calibrate.mode = 'h'
-        iraf.calibrate.input = sciobj+'.ms'
-        iraf.calibrate.output = sciobj+'_flux'
+        iraf.calibrate.input = sciobj + '.ms'
+        output_name = sciobj[1:] + '_flux'
+        iraf.calibrate.output = output_name
+        print('name = ' + output_name)
         iraf.calibrate.extinction = 'onedstds$kpnoextinct.dat'
         iraf.calibrate.sensitivity = 'sens.0001'
         iraf.calibrate.ignoreaps = 'yes'
         iraf.calibrate()
-        move_files([sciobj+'.fits'])
 
 def obj_proc(files,trace=None):
     if trace is None:

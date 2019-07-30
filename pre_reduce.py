@@ -10,11 +10,11 @@ def makeobjlist():
     bias,flat,science_obj,lamp=[],[],[],[]
     objlist = []
     with open('objlist.txt', 'w') as f:
-        f.write('#FILENAME          TYPE         EXPTIME GRATING  DATE \n')
+        f.write('#FILENAME          TYPE         TARGET          EXPTIME GRATING  DATE \n')
         for x in sorted(fitsfiles):
             with pf.open(x) as t:
                 hdr = t[0].header
-                f.write('%s %s %s %s %s\n' %(x, hdr['OBSTYPE'].ljust(12),
+                f.write('%s %s %s %s %s %s\n' %(x, hdr['OBSTYPE'].ljust(12), hdr['SCITARG'].ljust(15),
                                                 str(int(hdr['EXPTIME'])).ljust(7), hdr['GRATING'], hdr['DATE']))
 
 
@@ -66,6 +66,7 @@ if __name__ == '__main__':
         os.mkdir(rawdir)
     updateheader()
     makeobjlist()
+    """
     Bias,Flat,Obj,Arc = loadobjects()
     move_files(Bias)
     subtract_overscan(Flat)
@@ -73,3 +74,4 @@ if __name__ == '__main__':
     subtract_overscan(Arc)
     make_response(Flat)
     make_arc(Arc)
+    """
