@@ -40,5 +40,5 @@ def sensfunc(star_list, extract=True, caldir = "onedstds$spec50cal/", splot='yes
     iraf.sensfunc.sensitivity = 'sens'
     iraf.sensfunc.extinction = 'onedstds$kpnoextinct.dat'
 
-    iraf.sensfunc.order = 6
+    iraf.sensfunc.order = 30
     iraf.sensfunc()
