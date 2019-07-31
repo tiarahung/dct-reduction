@@ -1,3 +1,4 @@
 *.pyc
 dctpipeline/*.pyc
+dctpipeline/__pycache__
 .zcache/
