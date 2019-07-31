@@ -1,4 +1,3 @@
-#! /usr/local/miniconda2/envs/iraf27/bin/python
 from dctpipeline.dctutils import *
 import shutil, glob
 
