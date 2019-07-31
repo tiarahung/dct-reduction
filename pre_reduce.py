@@ -1,5 +1,6 @@
 #! /usr/local/miniconda2/envs/iraf27/bin/python
 from dctpipeline.dctutils import *
+import shutil, glob
 
 def updateheader():
     iraf.hedit('*.fits', 'DISPAXIS', 1, update='yes', verify='no', add='yes', show='no')
@@ -49,7 +50,8 @@ def make_response(flatfiles):
     iraf.response.high_rej = 3
     iraf.response.interactive = "no"
     iraf.response('masterflat.fits', 'masterflat.fits', 'flat_1.5.fits', interactive="yes")
-    move_files(flatfiles)
+    for flat in flatfiles:
+        os.remove(flat)
 
 def make_arc(arcfiles):
     iraf.unlearn('imcombine')
@@ -57,21 +59,24 @@ def make_arc(arcfiles):
     iraf.imcombine.gain = ccdspecs['gain']
     iraf.imcombine(','.join(arcfiles), 'CdArNeHg_1.5', reject="none")
     #move files to raw dir
-    move_files(arcfiles)
+    for arc in arcfiles:
+        os.remove(arc)
 
 if __name__ == '__main__':
     pwd= os.getcwd()
     rawdir=pwd+"/raw/"
     if not os.path.isdir(rawdir):
         os.mkdir(rawdir)
+    for f in glob.glob('*.fits'):
+        shutil.copy(f, rawdir)
     updateheader()
     makeobjlist()
-    """
     Bias,Flat,Obj,Arc = loadobjects()
-    move_files(Bias)
+    assert (len(Arc) < 10), 'You have more than 10 arc files, does that seem right? Remove focus loop products before proceeding.'
+    for bias in Bias:
+        os.remove(bias)
     subtract_overscan(Flat)
     subtract_overscan(Obj)
     subtract_overscan(Arc)
     make_response(Flat)
     make_arc(Arc)
-    """

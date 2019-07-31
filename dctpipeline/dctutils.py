@@ -49,7 +49,7 @@ def getwave(fitsfile):
 
 def interp(wav, flux, wnew):
     from scipy import interpolate
-    f = interpolate.interp1d(wav, flux)
+    f = interpolate.interp1d(wav, flux, fill_value="extrapolate")
     return f(wnew)
 
 def box_smooth(arr,n=2):

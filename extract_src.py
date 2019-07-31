@@ -1,21 +1,17 @@
 #! /usr/local/miniconda2/envs/iraf27/bin/python
 from dctpipeline.dctutils import *
 from dctpipeline.extract_ap import *
-from dctpipeline.skyshift import *
-from dctpipeline.telluric_remove import *
-from dctpipeline.sensfunc import *
+import argparse, os
 
-#mkbstar('20190629.0048.ms.fits')
-#skyshift('0063')
 
-#extract_ap('0063', extract=True, flux=False, shift=True, telluric=False)
-#sensfunc(['0063'])
-#mkbstar('20190629.0063.ms.fits')
 
-obsgroup = ['0064', '0065']
-for num in obsgroup:
-	extract_ap(num, extract=True, flux=True, shift=True, telluric=True)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Extract and flux calibrate a science target. Frames supplied are combined into a single spectrum')
+    parser.add_argument('-f', '--filenum', action='store', nargs='+', dest='filenum',
+                help='file number(s) to be extracted (e.g. 0036 0037)')
+    args = parser.parse_args()
+    obsgroup = args.filenum
+    for num in obsgroup:
+        extract_ap(num, extract=True, flux=True, shift=True, telluric=True)
 
-coadd(obsgroup)
-
-#telluric_remove('20190629.0049.ms.fits', 'bstar.fits')
+    coadd(obsgroup)
