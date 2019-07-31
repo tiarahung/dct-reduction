@@ -61,4 +61,5 @@ python $dct_reduction/extract_src.py -f 0066 0067 0068
 ```
 > In this step, the file numbers should belong to **one single target**. The script extracts each frame individually and combine them in the end.
 
-> The name of the final combined spectrum has the form _SCITARG_flux.fits_. 
+> The name of the final combined spectrum has the form _SCITARG_flux.fits_.
+Since all the calibration files are produced in step 1 and 2. You only need to repeat step 3 for each science target. 
