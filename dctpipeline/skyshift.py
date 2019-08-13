@@ -2,6 +2,7 @@ from .dctutils import obsid, crosscorrelation, calib_dir
 import astropy.io.fits as pf
 import numpy as np
 import os
+from termcolor import colored
 
 __all__ = ['skyshift']
 
@@ -21,8 +22,14 @@ def skyshift(filenum):
 
             #sky spectrum is the third extension
             y = t[0].data[2, 0]
+            ind = x_range > 5000
             y_rebinned = np.interp(sky_w, x_range, y)
-            delta = (np.argmax(crosscorrelation(sky_f, y_rebinned, 200)) - 200) * t[0].header['CD1_1']
-            print("Shifting spectrum by %.2f Angstrom" %(delta, ))
+            delta = (np.argmax(crosscorrelation(sky_f[ind], y_rebinned[ind], 100)) - 100) * t[0].header['CD1_1']
+            if delta > 50:
+                delta = 0
+                print('sky shift failed, no change in wavelength is applied.')
+
+            text = colored("Shifting spectrum by %.2f Angstrom" %(delta, ), 'green')
+            print(text)
             hdr['CRVAL1'] += delta
             hdr['SKYWAV'] = 1
